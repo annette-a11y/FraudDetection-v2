@@ -1,0 +1,42 @@
+name: Docker image
+
+# Builds the dashboard image, checks it serves the dashboard, and publishes it
+# to GitHub Container Registry as ghcr.io/<owner>/fraud-dashboard-v2.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t fraud-dashboard-v2 .
+
+      - name: Smoke test
+        run: |
+          docker run -d --name dash -p 8080:8080 fraud-dashboard-v2
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/dashboard.html | grep -q "Fraud Detection Dashboard"; then
+              echo "Dashboard is being served"; exit 0
+            fi
+            sleep 2
+          done
+          docker logs dash; exit 1
+
+      - name: Publish to GitHub Container Registry
+        run: |
+          IMAGE=ghcr.io/$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')/fraud-dashboard-v2
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker tag fraud-dashboard-v2 $IMAGE:latest
+          docker tag fraud-dashboard-v2 $IMAGE:${{ github.sha }}
+          docker push $IMAGE:latest
+          docker push $IMAGE:${{ github.sha }}
+          echo "Published $IMAGE:latest" >> "$GITHUB_STEP_SUMMARY"

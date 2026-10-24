@@ -1,0 +1,57 @@
+{
+  "total": 1000,
+  "fraud_detected": 182,
+  "avg_risk_score": 18.6,
+  "severity_counts": {
+    "Low": 653,
+    "Medium": 165,
+    "High": 130,
+    "Critical": 52
+  },
+  "ml_test_metrics": {
+    "accuracy": 0.927,
+    "precision": 0.864,
+    "recall": 0.814,
+    "f1": 0.838
+  },
+  "rule_engine_test_metrics": {
+    "accuracy": 0.887,
+    "precision": 0.773,
+    "recall": 0.729,
+    "f1": 0.75
+  },
+  "top_features": [
+    {
+      "feature": "prev_transactions",
+      "importance": 0.177
+    },
+    {
+      "feature": "num_items",
+      "importance": 0.102
+    },
+    {
+      "feature": "failed_login_attempts",
+      "importance": 0.094
+    },
+    {
+      "feature": "repeated_product_purchase",
+      "importance": 0.086
+    },
+    {
+      "feature": "transaction_frequency",
+      "importance": 0.074
+    },
+    {
+      "feature": "transaction_amount",
+      "importance": 0.066
+    },
+    {
+      "feature": "flag_duplicate_account",
+      "importance": 0.056
+    },
+    {
+      "feature": "hour_of_day",
+      "importance": 0.055
+    }
+  ]
+}
